@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TimeRulerView">
+        <attr name="textFontSize" format="dimension|reference"/>
+        <attr name="textColor" format="color|reference"/>
+
+
+        <attr name="totalTimePerCell" >
+            <enum name="hour" value="24"/>
+            <enum name="halfHour" value="48"/>
+        </attr>
+        <attr name="widthPerCell" format="dimension|reference"/>
+
+        <attr name="scaleColor" format="color|reference"/>
+        <attr name="topLineColor" format="color|reference"/>
+        <attr name="bottomLineColor" format="color|reference"/>
+        <attr name="middleLineColor" format="color|reference"/>
+        <attr name="selectBackgroundColor" format="color|reference"/>
+
+        <attr name="topLineStrokeWidth" format="dimension|reference"/>
+        <attr name="bottomLineStrokeWidth" format="dimension|reference"/>
+        <attr name="middleLineStrokeWidth" format="dimension|reference"/>
+        <attr name="scaleLineStrokeWidth" format="dimension|reference"/>
+    </declare-styleable>
+</resources>
