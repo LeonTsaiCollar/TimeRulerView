@@ -161,7 +161,7 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
     /**
      * 中间条的X坐标
      */
-    private val mMiddleLineX = 0F
+    private var mMiddleLineX = 0F
     /**
      * 手指滑动的速度
      */
@@ -170,10 +170,16 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
      * 选择时间回调
      */
 //    private val onChooseTimeListener: OnActionListener? = null
+
+
     /**
      * 需要播放的时间段列表
      */
-    private val timeInfos: ArrayList<TimeInfo>? = null
+    var timeInfos = arrayListOf<TimeInfo>()
+        set(value) {
+            field = value
+            invalidate()
+        }
     /**
      * 手指滑动划过的天数
      */
@@ -292,7 +298,7 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
 
         mSelectPaint.isAntiAlias = true
         mSelectPaint.color = mSelectBackgroundColor
-        mSelectPaint.style = Paint.Style.STROKE
+        mSelectPaint.style = Paint.Style.FILL
 
         mTextPaint.isAntiAlias = true
         mTextPaint.color = mTextColor
@@ -301,9 +307,17 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
         mTextPaint.textSize = mTextFontSize
     }
 
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        mMiddleLineX = measuredWidth / 2f
+    }
+
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
-        drawTopLine(canvas!!)
+
+
+        drawTimeInfos(canvas!!)
+        drawTopLine(canvas)
         drawBottomLine(canvas)
         drawMiddleLine(canvas)
         drawScaleLine(canvas)
@@ -354,6 +368,50 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
                 drawText(i, XFromMiddlePoint.toFloat(), canvas)
             }
         }
+    }
+
+    fun drawTimeInfos(canvas: Canvas) {
+        val currentMillis = mCalendar.timeInMillis
+        //半个View长度所占的毫秒数
+        val halfViewWidthMillis = (measuredWidth / 2) * mMillisecondPerPixel
+        //最左边时刻条绑定的毫秒数
+        val leftMillis = currentMillis - halfViewWidthMillis
+        //最右边时刻条绑定的毫秒数
+        val rightMillis = currentMillis + halfViewWidthMillis
+
+        timeInfos.forEach {
+            val startOffsetPixel = (it.startTime.timeInMillis - currentMillis) / mMillisecondPerPixel
+            val endOffsetPixel = (it.endTime.timeInMillis - currentMillis) / mMillisecondPerPixel
+            if (rightMillis > it.endTime.timeInMillis && leftMillis < it.startTime.timeInMillis) {
+                //时间段在屏幕所容纳的刻度尺中间
+                canvas.drawRect(
+                    mMiddleLineX + startOffsetPixel,
+                    0f,
+                    mMiddleLineX + endOffsetPixel,
+                    measuredHeight.toFloat(),
+                    mSelectPaint
+                )
+            } else if (rightMillis <= it.endTime.timeInMillis && rightMillis >= it.startTime.timeInMillis) {
+                //时间段在屏幕所容纳的刻度尺右边
+                canvas.drawRect(
+                    mMiddleLineX + startOffsetPixel,
+                    0f,
+                    measuredWidth.toFloat(),
+                    measuredHeight.toFloat(),
+                    mSelectPaint
+                )
+            } else if (leftMillis <= it.endTime.timeInMillis && leftMillis >= it.startTime.timeInMillis) {
+                //时间段在屏幕所容纳的刻度尺左边
+                canvas.drawRect(
+                    0f,
+                    0f,
+                    mMiddleLineX + endOffsetPixel,
+                    measuredHeight.toFloat(),
+                    mSelectPaint
+                )
+            }
+        }
+
     }
 
     private fun drawText(i: Int, moveX: Float, canvas: Canvas) {
