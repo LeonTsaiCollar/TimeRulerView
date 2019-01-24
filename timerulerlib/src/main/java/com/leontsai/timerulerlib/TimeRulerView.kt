@@ -396,4 +396,6 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
     interface OnSelectTimeListener {
         fun onSelectTime(time: Long)
     }
+
+    
 }
