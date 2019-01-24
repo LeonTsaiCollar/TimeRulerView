@@ -142,6 +142,19 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
      */
     private var mCalendar = Calendar.getInstance()
     /**
+     * 中间条绑定的日历对象对应的毫秒数
+     */
+    var timeInMillis = 0L
+        get() {
+            return mCalendar.timeInMillis
+        }
+        set(value) {
+            field = value
+            mCalendar.timeInMillis = field
+            initMillisecond = mCalendar.timeInMillis
+            invalidate()
+        }
+    /**
      * 中间条绑定的日历对象初始毫秒值
      */
     private var initMillisecond = 0L
@@ -201,11 +214,10 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
         val year = mCalendar.get(Calendar.YEAR)
         val month = mCalendar.get(Calendar.MONTH)
         val day = mCalendar.get(Calendar.DAY_OF_MONTH)
-        mCalendar.set(year, month, day, 0, 0, 0)
+        mCalendar.set(year, month, day, 12, 0, 0)
         initMillisecond = mCalendar.timeInMillis
 
         val setTime = Calendar.getInstance()
-
         for (i in 0..mTotalCellNum) {
             setTime.set(
                 year, month, day, if (mTotalCellNum == 48) {
@@ -219,7 +231,6 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
             scaleInfo.text = i
             scaleList.add(scaleInfo)
         }
-
     }
 
     private fun initDefaultValue(@NonNull typedArray: TypedArray) {
@@ -373,9 +384,8 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
         mCalendar.timeInMillis = initMillisecond - (mMoveDistance * mMillisecondPerPixel).toLong()
 
         if (onSelectTimeListener != null) {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = mCalendar.timeInMillis
-            onSelectTimeListener!!.onSelectTime(calendar)
+            val time = mCalendar.timeInMillis
+            onSelectTimeListener!!.onSelectTime(time)
         }
 
         invalidate()
@@ -384,7 +394,6 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
     var onSelectTimeListener: OnSelectTimeListener? = null
 
     interface OnSelectTimeListener {
-        fun onSelectTime(time: Calendar)
+        fun onSelectTime(time: Long)
     }
-
 }
