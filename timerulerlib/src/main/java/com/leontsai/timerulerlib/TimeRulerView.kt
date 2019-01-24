@@ -122,14 +122,6 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
      */
     private var mMoveDistance = 0f
     /**
-     * 手指最后停留的坐标
-     */
-    private val mLastX = 0f
-    /**
-     * 每一次event事件的偏移距离
-     */
-    private val mPointXoff = 0f
-    /**
      * 一天的时间所占的总的像素
      */
     private var totalPixelPerDay = mTotalCellNum * mWidthPerCell
@@ -163,16 +155,6 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
      */
     private var mMiddleLineX = 0F
     /**
-     * 手指滑动的速度
-     */
-//    private VelocityTracker mTracker;
-    /**
-     * 选择时间回调
-     */
-//    private val onChooseTimeListener: OnActionListener? = null
-
-
-    /**
      * 需要播放的时间段列表
      */
     var timeInfos = arrayListOf<TimeInfo>()
@@ -180,10 +162,8 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
             field = value
             invalidate()
         }
-    /**
-     * 手指滑动划过的天数
-     */
-    private val dayBySlide: Int = 0
+
+    private var scaleList = arrayListOf<ScaleInfo>()
 
     /**
      * 回放时间段最小时间点
@@ -193,11 +173,7 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
      * 回放时间段最大时间点
      */
     private val mMaxTime: Long = 0
-
-    private var scaleList = arrayListOf<ScaleInfo>()
-
     private val shrink_or_magnify: Boolean = false
-    private val lastFingerDis: Double = 0.toDouble()
     private val scaleRatio = 1f
 
     constructor(mContext: Context) : this(mContext, null)
@@ -315,7 +291,6 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-
         drawTimeInfos(canvas!!)
         drawTopLine(canvas)
         drawBottomLine(canvas)
@@ -323,13 +298,18 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
         drawScaleLine(canvas)
     }
 
-
+    /**
+     * 顶线
+     */
     private fun drawTopLine(canvas: Canvas) {
         canvas.drawLine(
             0f, 0f, measuredWidth.toFloat(), 0f, mTopLinePaint
         )
     }
 
+    /**
+     * 底线
+     */
     private fun drawBottomLine(canvas: Canvas) {
         canvas.drawLine(
             0f,
@@ -340,6 +320,9 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
         )
     }
 
+    /**
+     * 中间线
+     */
     private fun drawMiddleLine(canvas: Canvas) {
         canvas.drawLine(
             measuredWidth / 2f,
@@ -350,6 +333,9 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
         )
     }
 
+    /**
+     * 刻度
+     */
     private fun drawScaleLine(canvas: Canvas) {
         for (i in 0..mTotalCellNum) {
             val time = scaleList[i].time
@@ -370,6 +356,10 @@ class TimeRulerView(private val mContext: Context, attrs: AttributeSet?) : View(
         }
     }
 
+
+    /**
+     * 渲染可回放时间段
+     */
     fun drawTimeInfos(canvas: Canvas) {
         val currentMillis = mCalendar.timeInMillis
         //半个View长度所占的毫秒数
