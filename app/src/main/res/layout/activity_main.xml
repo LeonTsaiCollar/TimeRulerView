@@ -16,11 +16,11 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:visibility="visible"
-    app:topLineColor="@color/colorPrimary"
-    app:bottomLineColor="@color/colorAccent"
-    app:middleLineColor="@android:color/holo_green_dark"
-    app:selectBackgroundColor="@android:color/holo_orange_light"
-    app:scaleColor="@android:color/holo_red_dark"/>
+            app:topLineColor="@color/colorPrimary"
+            app:bottomLineColor="@color/colorPrimary"
+            app:middleLineColor="@color/colorPrimary"
+            app:selectBackgroundColor="@android:color/holo_orange_light"
+            app:scaleColor="@color/colorPrimary"/>
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/rulerView_tv"
